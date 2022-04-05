@@ -1,11 +1,17 @@
+from asyncio import subprocess
 from simple_websocket_server import WebSocketServer, WebSocket
 from protocol import ProtocolDecodeur
+import subprocess
 
 
 class SimpleChat(WebSocket):
     def handle(self):
         dataTr = ProtocolDecodeur(self.data)
         [key, val] = dataTr.getKeyValue()
+        if (key == "/button"):
+            list_files = subprocess.run(
+                ["raspistill", "-o", "Desktop/img.jpg"])
+
         print("Key", key)
         print("Value", val)
 
