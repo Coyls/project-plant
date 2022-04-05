@@ -21,8 +21,8 @@ GPIO.setmode(GPIO.BCM)
 
 GPIO.setup(15, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-GPIO.add_event_detect(15, GPIO.RISING, callback=button_callback)
+# GPIO.add_event_detect(15, GPIO.RISING, callback=button_callback)
 
-while True:
-    print('Waiting for a push')
-    time.sleep(3)
+# while True:
+#     print('Waiting for a push')
+#     time.sleep(3)
