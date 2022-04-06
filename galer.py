@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python
 
 ################################################################################
@@ -65,7 +66,7 @@ from blue_st_sdk.features.audio.adpcm.feature_audio_adpcm_sync import FeatureAud
 
 # CONSTANTS
 
-stSensorName = "BCN-009"
+stSensorName = "BCN-423"
 
 # Presentation message.
 INTRO = """##################
