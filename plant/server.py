@@ -1,7 +1,7 @@
 from simple_websocket_server import WebSocketServer, WebSocket
 from protocol import ProtocolDecodeur
 import time
-
+import subprocess
 
 class Acc:
     button = 0
@@ -15,6 +15,14 @@ class Acc:
             self.proximity = int(val)
         if key == "/button":
             self.button = int(val)
+
+class Command:
+
+    def __init__(self, cmd: str) -> None:
+        self.cmd = cmd
+
+    def use(self):
+        return subprocess.run(self.cmd.split(" "))
 
 
 class SimpleChat(WebSocket):
@@ -33,6 +41,8 @@ class SimpleChat(WebSocket):
             print("OK")
 
             if(self.acc.button == 1):
+                cmd = Command("python3 ./led.py")
+                cmd.use()
                 print("PRESS")
                 self.acc.button = 0
 
