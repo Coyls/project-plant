@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 import time
  
-SENSOR_PIN = 23
+SENSOR_PIN = 24
  
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(SENSOR_PIN, GPIO.IN)
@@ -15,5 +15,5 @@ try:
     while True:
         time.sleep(100)
 except KeyboardInterrupt:
-    print "Finish..."
+    print("Finish...")
 GPIO.cleanup()
