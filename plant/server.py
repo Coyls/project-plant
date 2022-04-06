@@ -35,19 +35,15 @@ class SimpleChat(WebSocket):
 
         self.acc.setValue(key, val)
 
-        if (self.acc.temp > 20 and self.acc.proximity < 120):
+        if (self.acc.proximity == 1):
             print("tmp :", self.acc.temp)
             print("prx :", self.acc.proximity)
             print("OK")
 
-            if(self.acc.button == 1):
-                cmd = Command("python3 ./led.py")
-                cmd.use()
-                print("PRESS")
-                self.acc.button = 0
-
-        
-
+            cmd = Command("python3 ./led.py")
+            cmd.use()
+            self.acc.proximity = 0
+            
     def connected(self):
         print(self.address, 'connected')
         for client in clients:
