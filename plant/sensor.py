@@ -1,4 +1,14 @@
-import RPi.GPIO as GPIO
+from gpiozero import MotionSensor
+
+pir = MotionSensor(4)
+
+while True:
+	pir.wait_for_motion()
+	print("You moved")
+	pir.wait_for_no_motion()
+
+
+""" import RPi.GPIO as GPIO
 import time
  
 SENSOR_PIN = 24
@@ -16,4 +26,4 @@ try:
         time.sleep(100)
 except KeyboardInterrupt:
     print("Finish...")
-GPIO.cleanup()
+GPIO.cleanup() """
