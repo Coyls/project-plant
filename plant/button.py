@@ -11,7 +11,7 @@ def button_callback(channel):
     print('==============')
     print("button pushed")
     print("Sending data")
-    data = ProtocolGenerator("/button", "HIGHT")
+    data = ProtocolGenerator("/button", "1")
     ws.send(data.create())
     print('==============')
 
@@ -25,4 +25,4 @@ GPIO.add_event_detect(15, GPIO.RISING, callback=button_callback)
 
 while True:
     print('Waiting for a push')
-    time.sleep(3)
+    time.sleep(10)

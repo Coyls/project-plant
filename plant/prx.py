@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 
 ################################################################################
@@ -54,6 +53,8 @@ from blue_st_sdk.node import NodeListener
 from blue_st_sdk.feature import FeatureListener
 from blue_st_sdk.features.audio.adpcm.feature_audio_adpcm import FeatureAudioADPCM
 from blue_st_sdk.features.audio.adpcm.feature_audio_adpcm_sync import FeatureAudioADPCMSync
+from websocket import create_connection
+from protocol import ProtocolGenerator
 
 # PRECONDITIONS
 #
@@ -79,6 +80,7 @@ SCANNING_TIME_s = 10
 # Number of notifications to get before disabling them.
 NOTIFICATIONS = 100
 
+ws = create_connection("ws://localhost:8000")
 
 # FUNCTIONS
 
@@ -168,10 +170,17 @@ class MyFeatureListener(FeatureListener):
             self._notifications += 1
             print(feature)
             proxyValue = sample.get_data()[0]
-            if proxyValue > 200:
-                print("LOIN")
-            else:
-                print("PROCHE")
+            name = sample.get_description()[0].get_name()
+            # if self._notifications == NOTIFICATIONS:
+            if sample.get_description()[0].get_name() == "Proximity":
+                protocol = ProtocolGenerator("/proximity", str(proxyValue))
+                ws.send(protocol.create())
+                if proxyValue > 50:
+                    print("LOIN")
+                else:
+                    print("PROCHE")
+                    
+                
 
 
 # MAIN APPLICATION
@@ -251,7 +260,23 @@ def main(argv):
 
                 # Selecting a feature.
 
-                feature = features[1]
+                while True:
+                    choice = int(input('\nSelect a feature '
+                                       '(\'0\' to disconnect): '))
+                    if choice >= 0 and choice <= len(features):
+                        break
+                if choice == 0:
+                    # Disconnecting from the device.
+                    print('\nDisconnecting from %s...' % (device.get_name()))
+                    if not device.disconnect():
+                        print('Disconnection failed.\n')
+                        continue
+                    device.remove_listener(node_listener)
+                    # Resetting discovery.
+                    manager.reset_discovery()
+                    # Going back to the list of devices.
+                    break
+                feature = features[choice - 1]
 
                 # Enabling notifications.
                 feature_listener = MyFeatureListener()

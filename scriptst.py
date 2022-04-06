@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 
 ################################################################################
@@ -55,6 +54,7 @@ from blue_st_sdk.feature import FeatureListener
 from blue_st_sdk.features.audio.adpcm.feature_audio_adpcm import FeatureAudioADPCM
 from blue_st_sdk.features.audio.adpcm.feature_audio_adpcm_sync import FeatureAudioADPCMSync
 
+
 # PRECONDITIONS
 #
 # In case you want to modify the SDK, clone the repository and add the location
@@ -66,18 +66,16 @@ from blue_st_sdk.features.audio.adpcm.feature_audio_adpcm_sync import FeatureAud
 
 # CONSTANTS
 
-stSensorName = "BCN-423"
-
 # Presentation message.
 INTRO = """##################
 # BlueST Example #
 ##################"""
 
 # Bluetooth Scanning time in seconds (optional).
-SCANNING_TIME_s = 10
+SCANNING_TIME_s = 5
 
 # Number of notifications to get before disabling them.
-NOTIFICATIONS = 100
+NOTIFICATIONS = 10
 
 
 # FUNCTIONS
@@ -141,7 +139,7 @@ class MyNodeListener(NodeListener):
     #
     def on_disconnect(self, node, unexpected=False):
         print('Device %s disconnected%s.' % \
-              (node.get_name(), ' unexpectedly' if unexpected else ''))
+            (node.get_name(), ' unexpectedly' if unexpected else ''))
         if unexpected:
             # Exiting.
             print('\nExiting...\n')
@@ -153,6 +151,7 @@ class MyNodeListener(NodeListener):
 # feature has updated its data.
 #
 class MyFeatureListener(FeatureListener):
+
     _notifications = 0
     """Counting notifications to print only the desired ones."""
 
@@ -163,15 +162,9 @@ class MyFeatureListener(FeatureListener):
     # @param sample  Data extracted from the feature.
     #
     def on_update(self, feature, sample):
-
         if self._notifications < NOTIFICATIONS:
             self._notifications += 1
             print(feature)
-            proxyValue = sample.get_data()[0]
-            if proxyValue > 200:
-                print("LOIN")
-            else:
-                print("PROCHE")
 
 
 # MAIN APPLICATION
@@ -180,6 +173,7 @@ class MyFeatureListener(FeatureListener):
 # Main application.
 #
 def main(argv):
+
     # Printing intro.
     print_intro()
 
@@ -195,12 +189,12 @@ def main(argv):
             manager.discover(SCANNING_TIME_s)
 
             # Alternative 1: Asynchronous discovery of Bluetooth devices.
-            # manager.discover(SCANNING_TIME_s, True)
+            #manager.discover(SCANNING_TIME_s, True)
 
             # Alternative 2: Asynchronous discovery of Bluetooth devices.
-            # manager.start_discovery()
-            # time.sleep(SCANNING_TIME_s)
-            # manager.stop_discovery()
+            #manager.start_discovery()
+            #time.sleep(SCANNING_TIME_s)
+            #manager.stop_discovery()
 
             # Getting discovered devices.
             discovered_devices = manager.get_nodes()
@@ -216,14 +210,17 @@ def main(argv):
                 i += 1
 
             # Selecting a device.
-
-            indexOfDevice = 0
-
-            for i, device in enumerate(discovered_devices):
-                if device.get_name() == stSensorName:
-                    indexOfDevice = i
-
-            device = discovered_devices[indexOfDevice]
+            while True:
+                choice = int(
+                    input("\nSelect a device to connect to (\'0\' to quit): "))
+                if choice >= 0 and choice <= len(discovered_devices):
+                    break
+            if choice == 0:
+                # Exiting.
+                manager.remove_listener(manager_listener)
+                print('Exiting...\n')
+                sys.exit(0)
+            device = discovered_devices[choice - 1]
             node_listener = MyNodeListener()
             device.add_listener(node_listener)
 
@@ -241,17 +238,32 @@ def main(argv):
                 for feature in features:
                     if isinstance(feature, FeatureAudioADPCM):
                         audio_feature = feature
-                        print('%d,%d) %s' % (i, i + 1, "Audio & Sync"))
-                        i += 1
+                        print('%d,%d) %s' % (i,i+1, "Audio & Sync"))
+                        i+=1
                     elif isinstance(feature, FeatureAudioADPCMSync):
                         audio_sync_feature = feature
                     else:
                         print('%d) %s' % (i, feature.get_name()))
-                        i += 1
+                        i+=1
 
                 # Selecting a feature.
-
-                feature = features[1]
+                while True:
+                    choice = int(input('\nSelect a feature '
+                                       '(\'0\' to disconnect): '))
+                    if choice >= 0 and choice <= len(features):
+                        break
+                if choice == 0:
+                    # Disconnecting from the device.
+                    print('\nDisconnecting from %s...' % (device.get_name()))
+                    if not device.disconnect():
+                        print('Disconnection failed.\n')
+                        continue
+                    device.remove_listener(node_listener)
+                    # Resetting discovery.
+                    manager.reset_discovery()
+                    # Going back to the list of devices.
+                    break
+                feature = features[choice - 1]
 
                 # Enabling notifications.
                 feature_listener = MyFeatureListener()
@@ -277,7 +289,7 @@ def main(argv):
                 # Disabling notifications.
                 device.disable_notifications(feature)
                 feature.remove_listener(feature_listener)
-
+                
                 # Handling audio case (both audio features have to be disabled).
                 if isinstance(feature, FeatureAudioADPCM):
                     device.disable_notifications(audio_sync_feature)
@@ -293,7 +305,8 @@ def main(argv):
             sys.exit(0)
         except SystemExit:
             os._exit(0)
-            
+
 
 if __name__ == "__main__":
+
     main(sys.argv[1:])
