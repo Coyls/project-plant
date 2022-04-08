@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>WebSocket using Socket.io and NodeJS and ExpressJS</title>
+</head>
+
+<body>
+  <h1>Message list</h1>
+  <ul id="messageList"></ul>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io()
+
+    const messageList = document.getElementById("messageList")
+    
+    socket.on("message", (msg) => {  
+      const message = document.createElement("li")
+      message.innerHTML = msg
+      messageList.appendChild(message)
+    });
+  </script>
+</body>
+</html>

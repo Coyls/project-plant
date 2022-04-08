@@ -1,0 +1,236 @@
+/*
+------------------------------------------------------------------------------- VARIABLES */
+:root {
+  --color-white: #FFFFFF;
+  --color-black: #121212;
+  --color-gray: #E0E3E7;
+  --color-green: #22C8AA;
+  --color-green-dark: #146455;
+}
+
+/*
+------------------------------------------------------------------------------- RESET */
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+  text-rendering: optimizeLegibility;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+body {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  font-family: sans-serif;
+  font-size: 16px;
+  line-height: calc(16px * 1.61);
+  color: var(--color-black);
+  background-color: var(--color-white);
+  overflow: hidden;
+}
+
+a {
+  text-decoration: none;
+  outline: none;
+}
+
+em,
+i {
+  font-style: italic;
+}
+
+u,
+ins {
+  text-decoration: underline;
+}
+
+b,
+strong {
+  font-weight: bold;
+}
+
+li {
+  list-style: none;
+}
+
+button {
+  border: none;
+  background: transparent;
+  outline: none;
+}
+
+/*
+------------------------------------------------------------------------------- DASHBOARD */
+.dashboard {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: none;
+  width: 100vw;
+  height: 100vh;
+  padding-left: 16px;
+  padding-right: 16px;
+  background-color: var(--color-white);
+  z-index: 10;
+}
+
+.dashboard.isActive {
+  display: block;
+}
+
+.dashboard_container {
+  width: 100%;
+  max-width: 375px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 100px;
+}
+
+.dashboard_title {
+  font-size: 32px;
+}
+
+.dashboard_block {
+  display: block;
+  margin-top: 25px;
+}
+
+.dashboard_block.isHide {
+  display: none;
+}
+
+.dashboard_checkbox {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 55px;
+  margin-top: 10px;
+  border: 1px solid var(--color-gray);
+  border-radius: 5px;
+}
+
+.dashboard_input {
+  position: absolute;
+  opacity: 0;
+}
+
+.dashboard_label {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.dashboard_input:checked + .dashboard_label::before {
+  transition: all 0.15s ease-out;
+  background-color: var(--color-green);
+}
+
+.dashboard_input:disabled + .dashboard_label {
+  cursor: not-allowed;
+}
+
+.dashboard_input + .dashboard_label::before,
+.dashboard_input + .dashboard_label::after {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  transition: all 0.15s ease-out;
+  cursor: pointer;
+  content: "";
+}
+
+.dashboard_input + .dashboard_label::before {
+  width: 42px;
+  height: 24px;
+  border-radius: 50px;
+  background-color: var(--color-gray);
+}
+
+.dashboard_input + .dashboard_label::after {
+  right: 40px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50px;
+  background-color: var(--color-white);
+}
+
+.dashboard_input:checked + .dashboard_label::after {
+  right: 22px;
+}
+
+.dashboard_input:disabled + .dashboard_label::before,
+.dashboard_input:disabled + .dashboard_label::after {
+  cursor: not-allowed
+}
+
+.dashboard_input:disabled + .dashboard_label::before {
+  background-color: var(--color-green-dark);
+}
+
+.dashboard_input:disabled + .dashboard_label::after {
+  background-color: #909090;
+}
+
+.dashboard_input + .dashboard_label {
+  user-select: none;
+}
+
+.dashboard_button {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 55px;
+  margin-top: 30px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 5px;
+  font-size: 14px;
+  text-align: center;
+  color: var(--color-white);
+  background-color: var(--color-black);
+  cursor: pointer;
+}
+
+.dashboard_button.isDisable {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.dashboard_button.isActive {
+  color: var(--color-white);
+  background-color: var(--color-green);
+}
+
+.dashboard_button svg {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+}
+
+.dashboard_userSelect {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+}
+
+.dashboard_userSelect.isDisable {cursor: not-allowed;}
+.dashboard_userSelect.isDisable .dashboard_button {pointer-events: none;}
+
+.dashboard_userSelect .dashboard_button {
+  width: calc(50% - 10px);
+}

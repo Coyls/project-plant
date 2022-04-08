@@ -7,6 +7,7 @@ class Acc:
     button = 0
     proximity = 0
     temp = 0
+    switch = 0
 
     def setValue(self, key: str, val: str):
         if key == "/temp":
@@ -15,6 +16,9 @@ class Acc:
             self.proximity = int(val)
         if key == "/button":
             self.button = int(val)
+        if key == "/switch":
+            self.switch = int(val)
+        
 
 class Command:
 
@@ -33,16 +37,28 @@ class SimpleChat(WebSocket):
         dataTr = ProtocolDecodeur(self.data)
         [key, val] = dataTr.getKeyValue()
 
-        self.acc.setValue(key, val)
+        if val <= 2000 and self.acc.switch == 0:
+            print("CHANGE")
+            self.acc.setValue(key, 1)
+        elif val > 2000 and self.acc.switch == 1:
+            print("CHANGE")
+            self.acc.setValue(key, 0)
 
-        if (self.acc.proximity == 1):
+
+        
+
+        print(self.acc.switch)
+
+
+
+        """ if (self.acc.proximity == 1):
             print("tmp :", self.acc.temp)
             print("prx :", self.acc.proximity)
             print("OK")
 
             cmd = Command("python3 ./led.py")
             cmd.use()
-            self.acc.proximity = 0
+            self.acc.proximity = 0 """
             
     def connected(self):
         print(self.address, 'connected')
