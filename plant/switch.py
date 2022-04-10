@@ -11,9 +11,6 @@ from abc import abstractmethod
 from blue_st_sdk.manager import Manager
 from blue_st_sdk.manager import ManagerListener
 from blue_st_sdk.node import NodeListener
-from blue_st_sdk.feature import FeatureListener
-from blue_st_sdk.features.audio.adpcm.feature_audio_adpcm import FeatureAudioADPCM
-from blue_st_sdk.features.audio.adpcm.feature_audio_adpcm_sync import FeatureAudioADPCMSync
 
 from protocol import ProtocolGenerator
 from websocket import create_connection
@@ -22,17 +19,13 @@ from websocket import create_connection
 
 # Presentation message.
 INTRO = """##################
-# BlueST Example #
+# Switch #
 ##################"""
 
 # Bluetooth Scanning time in seconds (optional).
 SCANNING_TIME_s = 5
 
-# Number of notifications to get before disabling them.
-NOTIFICATIONS = 1000
-
 til = "BCN-423"
-prx = 7
 ws = create_connection("ws://localhost:8000")
 
 
@@ -103,35 +96,8 @@ class MyNodeListener(NodeListener):
             print('\nExiting...\n')
             sys.exit(0)
 
-
 #
-# Implementation of the interface used by the Feature class to notify that a
-# feature has updated its data.
-#
-class MyFeatureListener(FeatureListener):
-
-    _notifications = 0
-    """Counting notifications to print only the desired ones."""
-
-    #
-    # To be called whenever the feature updates its data.
-    #
-    # @param feature Feature that has updated.
-    # @param sample  Data extracted from the feature.
-    #
-    def on_update(self, feature, sample):
-        if self._notifications < NOTIFICATIONS:
-            self._notifications += 1
-
-            data = sample.get_data()
-            dataToSend = ProtocolGenerator("/switch", str(data[0]))
-            ws.send(dataToSend.create())
-
-
 # MAIN APPLICATION
-
-#
-# Main application.
 #
 def main(argv):
 
@@ -161,27 +127,19 @@ def main(argv):
                 # Listing discovered devices.
                 if not discovered_devices:
                     isConnected = False
-                    print('No Bluetooth devices found. Exiting...\n')
-                    sys.exit(0)
+                    print("retry...")
+                    # print('No Bluetooth devices found. Exiting...\n')
+                    # sys.exit(0)
                 else:
                     isConnected = True
 
 
-            i = 1
-            necklace = 0
+            necklace = False
 
             for device in discovered_devices:
                 if device.get_name() == til:
-                    necklace += i
-                    print("LALALALAL")
-                print('%d) %s: [%s]' % (i, device.get_name(), device.get_tag()))
-                i += 1
-
-            print("Necklace", necklace)
-
-            device = discovered_devices[necklace - 1]
-            node_listener = MyNodeListener()
-            device.add_listener(node_listener)
+                    necklace = True
+                print('%s: [%s]' % (device.get_name(), device.get_tag()))
 
             # Connecting to the device.
             print('Connecting to %s...' % (device.get_name()))
@@ -189,26 +147,17 @@ def main(argv):
                 print('Connection failed.\n')
                 continue
 
+
+            print("Connected !")
+            data = ProtocolGenerator("/switch", "1")
+            ws.send(data.create())
             while True:
-                # Getting features.
-                features = device.get_features()
-                
-                feature = features[prx - 1]
-
-                # Enabling notifications.
-                feature_listener = MyFeatureListener()
-                feature.add_listener(feature_listener)
-                device.enable_notifications(feature)
-
-                # Getting notifications.
-                notifications = 0
-                while notifications < NOTIFICATIONS:
-                    if device.wait_for_notifications(0.05):
-                        notifications += 1
-
-                # Disabling notifications.
-                device.disable_notifications(feature)
-                feature.remove_listener(feature_listener)
+                print("Wait for response !")
+                result = ws.recv()
+                print("Result")
+                if result:
+                    sys.exit(0)
+                time.sleep(100000)
                 
 
     except KeyboardInterrupt:

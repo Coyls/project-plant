@@ -37,12 +37,9 @@ class SimpleChat(WebSocket):
         dataTr = ProtocolDecodeur(self.data)
         [key, val] = dataTr.getKeyValue()
 
-        if val <= 2000 and self.acc.switch == 0:
-            print("CHANGE")
-            self.acc.setValue(key, 1)
-        elif val > 2000 and self.acc.switch == 1:
-            print("CHANGE")
-            self.acc.setValue(key, 0)
+        if key == "/switch":
+            time.sleep(10)
+            self.send_message("Test")
 
 
         
