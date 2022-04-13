@@ -11,4 +11,10 @@
 - **\-** --> GROUND
 - **S** --> GPIO 14
 
+## Humidity Ground (Boolean)
+
+- **\+** --> 5V
+- **\-** --> GROUND (en face GPIO 21)
+- **S** --> GPIO 20
+
 ![GPIO](GPIO.png)
