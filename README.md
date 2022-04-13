@@ -15,6 +15,13 @@
 
 - **\+** --> 5V
 - **\-** --> GROUND (en face GPIO 21)
-- **S** --> GPIO 20
+- **DO** --> GPIO 20
+
+## Rotary
+
+- **\+** --> 3.3V (Breadboard)
+- **\-** --> GROUND (Breadboard)
+- **CLK** --> GPIO 17
+- **DT** --> GPIO 18
 
 ![GPIO](GPIO.png)
